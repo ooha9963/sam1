@@ -1,0 +1,193 @@
+{
+    "body": {
+        "id":"0110bc03-4536-4de7-87a5-09bdb62a06f0",
+        "type": "guided",
+        "name": "Driving License Renewal Flow",
+        "description": "This is a guided decision tree.",
+        "startNodeId" : "1001",
+        "decisionTree": [
+            {
+                "id": "1001",
+                "type": "question",
+                "content": {
+                    "displayText": [
+                        "What is your age?",
+                        "How many years old are you?"
+                    ],
+                    "inputType": "number"
+                },
+                "slotId": null,
+                "paths": [
+                    {
+                        "id": "2001",
+                        "type": "response",
+                        "condition": {
+                            "and": [
+                                {
+                                    "<": [
+                                        {
+                                            "var": "temp"
+                                        },
+                                        110
+                                    ]
+                                },
+                                {
+                                    "==": [
+                                        {
+                                            "var": "pie.filling"
+                                        },
+                                        "apple"
+                                    ]
+                                }
+                            ]
+                        },
+                        "on_match": {
+                            "node_id": "1002"
+                        }
+                    }
+                ],
+                "metadata": {
+                    "width": 200,
+                    "height": 30,
+                    "x": 270,
+                    "y": 20
+                }
+            },
+            {
+                "id": "1002",
+                "type": "question",
+                "content": {
+                    "displayText": [
+                        "What is your name?"
+                    ],
+                    "inputType": "text"
+                },
+                "slotId": null,
+                "paths": [
+                    {
+                        "id": "2002",
+                        "type": "response",
+                        "condition": null,
+                        "on_match": {
+                            "node_id": "1003"
+                        }
+                    }
+                ],
+                "metadata": {
+                    "width": 200,
+                    "height": 30,
+                    "x": 270,
+                    "y": 100
+                }
+            },
+            {
+                "id": "1003",
+                "type": "question",
+                "content": {
+                    "displayText": [
+                        "Which city are you from?"
+                    ],
+                    "inputType": "text"
+                },
+                "slotId": null,
+                "paths": [
+                    {
+                        "id": "2003",
+                        "type": "response",
+                        "condition": null,
+                        "on_match": {
+                            "node_id": "1004"
+                        }
+                    }
+                ],
+                "metadata": {
+                    "width": 200,
+                    "height": 30,
+                    "x": 270,
+                    "y": 169.5
+                }
+            },
+            {
+                "id": "1004",
+                "type": "question",
+                "content": {
+                    "displayText": [
+                        "Do you have your license with you?"
+                    ],
+                    "inputType": "single_select"
+                },
+                "slotId": null,
+                "paths": [
+                    {
+                        "id": "2004",
+                        "type": "response",
+                        "condition": null,
+                        "on_match": {
+                            "node_id": "1005"
+                        }
+                    },
+                    {
+                        "id": "2005",
+                        "type": "response",
+                        "condition": null,
+                        "on_match": {
+                            "node_id": "1006"
+                        }
+                    }
+                ],
+                "metadata": {
+                    "width": 200,
+                    "height": 30,
+                    "x": 270,
+                    "y": 229.5
+                }
+            },
+            {
+                "id": "1005",
+                "type": "question",
+                "content": {
+                    "displayText": [
+                        "What is your license number?"
+                    ],
+                    "inputType": "text"
+                },
+                "slotId": null,
+                "paths": [],
+                "metadata": {
+                    "width": 200,
+                    "height": 30,
+                    "x": 110,
+                    "y": 320
+                }
+            },
+            {
+                "id": "1006",
+                "type": "message",
+                "content": {
+                    "displayText": [
+                        "Oh! Please keep your license handy next time."
+                    ],
+                    "inputType": "text"
+                },
+                "slotId": null,
+                "paths": [],
+                "metadata": {
+                    "width": 280,
+                    "height": 30,
+                    "x": 420,
+                    "y": 320
+                }
+            }
+        ],
+        "utterances": [
+            "How to start the driving license renewal process?",
+            "I want to renew my license."
+        ],
+        "topics": ["driving license", "DMV", "license renewal"],
+        "tags": ["renewal", "driving license"],
+        "sourceUrl": "http://drivinglicense.com/process"
+    },
+    "params": {
+        "path": {"componentId":"584ce7b3-4eb7-48ad-91f2-52e6d380c46500"}
+    }
+}

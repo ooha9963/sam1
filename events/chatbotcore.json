@@ -1,0 +1,17 @@
+{
+    "body":{
+    
+      "name":"driving license",
+      "description": "Renew license",
+      "welcomeMesasge":"hi hello",
+      "username":"John Doe",
+      "componentIds":["79740d20-2353-44a4-a8fe-0ba497971af9","afac1f2f-ab6a-482f-930a-3027f861244f"],
+      "config": {"semantic_search": {"elastic_search_index_id": "test1",
+        "confidence_threshold": 0.7 }}
+
+    },
+    "params": {
+      "path": {"chatbotId":"8b1945e6-3e02-4231-85c8-8a19b0663fee"}
+      
+  }
+  }

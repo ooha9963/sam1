@@ -1,0 +1,64 @@
+{
+  "body":{
+    "id":"198e8bae-dada-4d4f-9fec-a7df45d5d303",
+    "type": "faq",
+    "name": "Driving License Renewal Flow",
+    "description": "This is a faq.",
+    "username":"John Doe",
+    "limit":2,
+    
+    
+"faqList":[
+    {
+        "questions": ["Where do I register to vote?",
+            "ways to register for vote",
+            "how can I register for vote"
+        ],
+        "answer": "ans",
+        "topic": "elections",
+        "tags": ["information", "faqs", "how-to-register-to-vote"],
+        "src": "https://sos.nh.gov/elections/information/faqs/how-to-register-to-vote/"
+    }, {
+        "questions": ["Are the terms  domicile  and  residence  equivalent?",
+            "what are domicile and residence",
+            "is domicile same as residence",
+            "difference between domicile and residence"
+        ],
+        "answer":  "ans",
+        "topic": "elections",
+        "tags": ["information", "faqs", "voter-registration-motor-vehicle-law"],
+        "src": "https://sos.nh.gov/elections/information/faqs/voter-registration-motor-vehicle-law/"
+    }, {
+        "questions": ["How do I establish domicile/residence in New Hampshire?",
+            "establish home in new hampshire",
+            "how do I register my residence ?",
+            "How do I establish domicile/residence"
+        ],
+        "answer":  "ans",
+        "topic": "elections",
+        "tags": ["information", "faqs", "voter-registration-motor-vehicle-law"],
+        "src": "https://sos.nh.gov/elections/information/faqs/voter-registration-motor-vehicle-law/"
+    }, {
+        "questions": ["If I establish a domicile/residence in New Hampshire and drive in New Hampshire"
+        ],
+        "answer":  "ans",
+        "topic": "elections",
+        "tags": ["information", "faqs", "voter-registration-motor-vehicle-law"],
+        "src": "https://sos.nh.gov/elections/information/faqs/voter-registration-motor-vehicle-law/"
+    }, {
+        "questions": ["If I establish a domicile/residence in New Hampshire and own a vehicle used in New Hampshire, do I have to register that vehicle?"],
+        "answer":  "ans",
+        "topic": "elections",
+        "tags": ["information", "faqs", "voter-registration-motor-vehicle-law"],
+        "src": "https://sos.nh.gov/elections/information/faqs/voter-registration-motor-vehicle-law/"
+    } 
+]
+
+
+
+
+},
+"params": {
+    "path": {"componentId":"ea30cd2c-dfdc-4962-8cd2-94c5c22ceacb"}
+}
+}

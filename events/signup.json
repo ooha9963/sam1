@@ -1,0 +1,13 @@
+{
+    "body":{
+      "id":"2430e5e7-f7bb-43aa-b421-3313ea27c9e9",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john12312@email.com",
+      "password":"john@123",
+      "username": "john123@email.com"
+      
+    
+    }
+
+  }

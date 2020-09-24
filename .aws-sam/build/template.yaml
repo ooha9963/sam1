@@ -1,0 +1,259 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'sam-app
+
+  Sample SAM Template for sam-app
+
+  '
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        TableName: CHATBOT_MASTER
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: v1
+      Cors:
+        AllowMethods: '''POST, OPTIONS, GET, PUT'''
+        AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+        AllowOrigin: '''*'''
+  apiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+    - signupPostMethod
+    - loginPostMethod
+    Properties:
+      RestApiId:
+        Ref: MyApi
+      StageName: v1
+  postSignupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: CHATBOT_MASTER
+      CodeUri: postSignupFunction
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+  signupResourse:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+        - MyApi
+        - RootResourceId
+      PathPart: signup
+      RestApiId:
+        Ref: MyApi
+  signupPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS
+        Uri:
+          Fn::Sub:
+          - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn:
+              Fn::GetAtt:
+              - postSignupFunction
+              - Arn
+        RequestTemplates:
+          application/json: "## See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\r\
+            \n## This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\r\n#set($allParams = $input.params())\r\n{\r\n\"\
+            body\" : $input.json('$'),\r\n\"params\" : {\r\n#foreach($type in $allParams.keySet())\r\
+            \n#set($params = $allParams.get($type))\r\n\"$type\" : {\r\n#foreach($paramName\
+            \ in $params.keySet())\r\n\"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \r\n#if($foreach.hasNext),#end\r\n#end\r\n}\r\n#if($foreach.hasNext),#end\r\
+            \n#end\r\n},\r\n\"stage-variables\" : {\r\n#foreach($key in $stageVariables.keySet())\r\
+            \n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\r\n\
+            #if($foreach.hasNext),#end\r\n#end\r\n},\r\n\"context\" : {\r\n\"account-id\"\
+            \ : \"$context.identity.accountId\",\r\n\"api-id\" : \"$context.apiId\"\
+            ,\r\n\"api-key\" : \"$context.identity.apiKey\",\r\n\"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\r\n\"caller\" : \"$context.identity.caller\"\
+            ,\r\n\"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\r\n\"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\r\n\"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\r\n\"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\r\n\"http-method\" : \"$context.httpMethod\",\r\n\"stage\" : \"$context.stage\"\
+            ,\r\n\"source-ip\" : \"$context.identity.sourceIp\",\r\n\"user\" : \"\
+            $context.identity.user\",\r\n\"user-agent\" : \"$context.identity.userAgent\"\
+            ,\r\n\"user-arn\" : \"$context.identity.userArn\",\r\n\"request-id\" :\
+            \ \"$context.requestId\",\r\n\"resource-id\" : \"$context.resourceId\"\
+            ,\r\n\"resource-path\" : \"$context.resourcePath\"\r\n}\r\n}\r\n"
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: '''*'''
+            method.response.header.Access-Control-Allow-Methods: '''*'''
+            method.response.header.Access-Control-Allow-Origin: '''*'''
+        - StatusCode: 404
+          SelectionPattern: .*"statusCode":404.*
+          ResponseTemplates:
+            application/json: "#set($inputRoot = $input.path('$.errorMessage'))\r\n\
+              $inputRoot"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: '''*'''
+            method.response.header.Access-Control-Allow-Methods: '''*'''
+            method.response.header.Access-Control-Allow-Origin: '''*'''
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Headers: true
+          method.response.header.Access-Control-Allow-Methods: true
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: '200'
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Headers: true
+          method.response.header.Access-Control-Allow-Methods: true
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: '404'
+      ResourceId:
+        Ref: signupResourse
+      RestApiId:
+        Ref: MyApi
+  signupOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationHttpMethod: OPTIONS
+        Type: MOCK
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: '''*'''
+            method.response.header.Access-Control-Allow-Methods: '''*'''
+            method.response.header.Access-Control-Allow-Origin: '''*'''
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Headers: true
+          method.response.header.Access-Control-Allow-Methods: true
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: '200'
+      ResourceId:
+        Ref: signupResourse
+      RestApiId:
+        Ref: MyApi
+  postLoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: CHATBOT_MASTER
+      CodeUri: postLoginFunction
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+  loginResourse:
+    Type: AWS::ApiGateway::Resource
+    DependsOn:
+    - signupResourse
+    Properties:
+      ParentId:
+        Ref: signupResourse
+      PathPart: '{login}'
+      RestApiId:
+        Ref: MyApi
+  loginPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS
+        Uri:
+          Fn::Sub:
+          - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn:
+              Fn::GetAtt:
+              - postLoginFunction
+              - Arn
+        RequestTemplates:
+          application/json: "## See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\r\
+            \n## This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\r\n#set($allParams = $input.params())\r\n{\r\n\"\
+            body\" : $input.json('$'),\r\n\"params\" : {\r\n#foreach($type in $allParams.keySet())\r\
+            \n#set($params = $allParams.get($type))\r\n\"$type\" : {\r\n#foreach($paramName\
+            \ in $params.keySet())\r\n\"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \r\n#if($foreach.hasNext),#end\r\n#end\r\n}\r\n#if($foreach.hasNext),#end\r\
+            \n#end\r\n},\r\n\"stage-variables\" : {\r\n#foreach($key in $stageVariables.keySet())\r\
+            \n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\r\n\
+            #if($foreach.hasNext),#end\r\n#end\r\n},\r\n\"context\" : {\r\n\"account-id\"\
+            \ : \"$context.identity.accountId\",\r\n\"api-id\" : \"$context.apiId\"\
+            ,\r\n\"api-key\" : \"$context.identity.apiKey\",\r\n\"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\r\n\"caller\" : \"$context.identity.caller\"\
+            ,\r\n\"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\r\n\"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\r\n\"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\r\n\"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\r\n\"http-method\" : \"$context.httpMethod\",\r\n\"stage\" : \"$context.stage\"\
+            ,\r\n\"source-ip\" : \"$context.identity.sourceIp\",\r\n\"user\" : \"\
+            $context.identity.user\",\r\n\"user-agent\" : \"$context.identity.userAgent\"\
+            ,\r\n\"user-arn\" : \"$context.identity.userArn\",\r\n\"request-id\" :\
+            \ \"$context.requestId\",\r\n\"resource-id\" : \"$context.resourceId\"\
+            ,\r\n\"resource-path\" : \"$context.resourcePath\"\r\n}\r\n}\r\n"
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: '''*'''
+            method.response.header.Access-Control-Allow-Methods: '''*'''
+            method.response.header.Access-Control-Allow-Origin: '''*'''
+        - StatusCode: 404
+          SelectionPattern: .*"statusCode":404.*
+          ResponseTemplates:
+            application/json: "#set($inputRoot = $input.path('$.errorMessage'))\r\n\
+              $inputRoot"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: '''*'''
+            method.response.header.Access-Control-Allow-Methods: '''*'''
+            method.response.header.Access-Control-Allow-Origin: '''*'''
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Headers: true
+          method.response.header.Access-Control-Allow-Methods: true
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: '200'
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Headers: true
+          method.response.header.Access-Control-Allow-Methods: true
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: '404'
+      ResourceId:
+        Ref: loginResourse
+      RestApiId:
+        Ref: MyApi
+  loginOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationHttpMethod: OPTIONS
+        Type: MOCK
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: '''*'''
+            method.response.header.Access-Control-Allow-Methods: '''*'''
+            method.response.header.Access-Control-Allow-Origin: '''*'''
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Headers: true
+          method.response.header.Access-Control-Allow-Methods: true
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: '200'
+      ResourceId:
+        Ref: loginResourse
+      RestApiId:
+        Ref: MyApi
